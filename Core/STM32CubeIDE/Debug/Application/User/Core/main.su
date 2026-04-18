@@ -1,0 +1,10 @@
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:87:5:main	144	static
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:155:6:SystemClock_Config	88	static
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:201:13:MX_ADC1_Init	24	static
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:261:13:MX_ETH_Init	8	static
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:310:13:MX_I2C1_Init	8	static
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:358:13:MX_UART4_Init	8	static
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:391:13:MX_USART3_UART_Init	8	static
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:424:13:MX_USB_OTG_FS_PCD_Init	8	static
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:459:13:MX_GPIO_Init	56	static
+/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c:519:6:Error_Handler	4	static,ignoring_inline_asm

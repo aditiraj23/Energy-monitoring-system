@@ -1,0 +1,12 @@
+../Application/User/Core/i2c_lcd.c:15:13:LCD_SendByte	24	static
+../Application/User/Core/i2c_lcd.c:19:13:LCD_PulseEnable	24	static
+../Application/User/Core/i2c_lcd.c:27:13:LCD_SendNibble	24	static
+../Application/User/Core/i2c_lcd.c:32:13:LCD_SendCommand	16	static
+../Application/User/Core/i2c_lcd.c:41:13:LCD_SendData	16	static
+../Application/User/Core/i2c_lcd.c:48:6:LCD_Init	16	static
+../Application/User/Core/i2c_lcd.c:64:6:LCD_Clear	8	static
+../Application/User/Core/i2c_lcd.c:68:6:LCD_SetCursor	24	static
+../Application/User/Core/i2c_lcd.c:77:6:LCD_PrintChar	16	static
+../Application/User/Core/i2c_lcd.c:81:6:LCD_Print	16	static
+../Application/User/Core/i2c_lcd.c:87:6:LCD_Backlight	16	static
+../Application/User/Core/i2c_lcd.c:92:6:LCD_Printf	80	static
