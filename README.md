@@ -1,113 +1,112 @@
-# Carbon-Aware Energy Monitor
+⚡ Energy Monitoring System
+A real-time AC energy monitoring system built on the STM32F429ZI (NUCLEO-F429ZI) board. It measures AC voltage, current, and power using ZMPT101B and ACS712 sensors, displaying live readings on an I2C LCD.
 
-A real-time energy monitoring system built on the STM32 Nucleo-F429ZI that measures AC voltage, current, and power — then computes live carbon emission estimates and displays them on an LCD. Designed as a research prototype for edge intelligence in sustainable energy systems.
+📋 Features
 
-## Overview
+Real-time AC Voltage measurement (ZMPT101B)
+Real-time Current measurement (ACS712 20A)
+Power calculation (P = V × I)
+Live display on 16x2 I2C LCD
+Auto-calibration of current sensor offset on startup
 
-This project uses low-cost analog sensors interfaced with a Cortex-M4 microcontroller to capture true RMS voltage and current from a mains supply. 
-Power consumption is computed and converted to a real-time CO2 emission estimate using the India national grid carbon intensity factor (0.82 kgCO2/kWh). 
-All readings are displayed live on an LCD1602 and streamed over UART for 
-dataset collection and offline analysis.
 
-The system is the hardware foundation for ongoing research into edge AI-based 
-energy anomaly detection on resource-constrained embedded platforms.
+🛠️ Hardware Requirements
+ComponentDescriptionSTM32F429ZINUCLEO-F429ZI Development BoardZMPT101BAC Voltage Sensor ModuleACS712 20ACurrent Sensor Module16x2 I2C LCDDisplay (I2C address: 0x27)Jumper WiresFor connections
 
-## Hardware
+📌 Pin Configuration
+SensorSTM32 PinArduino HeaderADC ChannelZMPT101B (Voltage)PA3A0ADC1 CH3ACS712 (Current)PC0A1ADC1 CH10LCD SDAPB9-I2C1LCD SCLPB6-I2C1
 
-| Component         | Role                              |
-|-------------------|-----------------------------------|
-| Nucleo-F429ZI     | Main MCU — ARM Cortex-M4, 180MHz  |
-| ACS712 (30A)      | AC/DC current sensing via Hall effect |
-| ZMPT101B          | AC voltage sensing via transformer |
-| LCD1602 + I2C     | Live display of power and CO2     |
+⚡ Wiring Diagram
+AC Mains
+   │
+   ├──── ZMPT101B ──── A0 (PA3) ──── STM32 ADC
+   │
+   └──── ACS712 IP+ ──── Load ──── ACS712 IP- ──── Neutral
+              │
+              └──── A1 (PC0) ──── STM32 ADC
 
-## Measured Parameters
+⚠️ WARNING: Be extremely careful when working with AC mains voltage. Always use proper isolation and safety precautions.
 
-- AC RMS Voltage (V)
-- AC RMS Current (A)
-- Apparent Power (W)
-- Real-time CO2 emission rate (kgCO2/hr)
 
-## How It Works
+💻 Software Requirements
 
-Both sensors feed into ADC1 on the STM32 via DMA. 500 samples are collected 
-per measurement cycle to compute true RMS values using the square-root of 
-mean-squares method. A DC offset calibration is applied to both channels to 
-remove the sensor bias voltage before RMS computation. The resulting power figure is multiplied by India's grid emission factor to produce a live carbon estimate.
+STM32CubeIDE
+STM32CubeMX
+STM32 HAL Drivers (STM32F4xx)
+GNU Tools for STM32 (14.3.rel1)
+VS Code (for GitHub integration)
 
-Readings are refreshed every 500ms on the LCD and simultaneously streamed 
-as CSV over USART2 (115200 baud) for PC-side logging and dataset collection.
 
-## Calibration
+🚀 Getting Started
+1. Clone the Repository
+bashgit clone https://github.com/YOUR_USERNAME/Energy-monitoring-system.git
+cd Energy-monitoring-system
+2. Open in STM32CubeIDE
 
-The ZMPT101B scale factor and both sensor midpoints are calibrated against 
-a reference plug-in energy meter. Calibration values are defined as constants 
-in `Core/Inc/energy_config.h`.
+Open STM32CubeIDE
+Go to File → Import → General → Existing Projects into Workspace
+Browse to the STM32CubeIDE folder inside the cloned repo
+Click Finish
 
-## Repository Structure
+3. Build the Project
 
-energy-monitor/
+Click Project → Build or press Ctrl+B
+Flash to board using Run → Debug
+
+
+📐 Sensor Formulas
+Voltage (ZMPT101B)
+V_rms = sqrt(mean(samples²)) × 311.13
+Where 311.13 = 220V × √2 (peak voltage for 220V AC mains)
+Current (ACS712 20A)
+I_rms = sqrt(mean(samples²)) / sensitivity
+sensitivity = 0.1 V/A  (100mV per Amp for 20A version)
+Power
+P = V_rms × I_rms  (in Watts)
+
+📺 LCD Display Format
+┌────────────────┐
+│ V:220.0V I:2.50A│
+│ P:550.0W        │
+└────────────────┘
+
+⚙️ Key Configuration
+ParameterValueADC Resolution12-bit (0–4095)ADC Reference3.3VSampling500 samples per readingCurrent OffsetAuto-calibrated on bootDead Zone< 0.3A treated as 0MCU Clock168 MHzI2C Speed100 kHz
+
+📁 Project Structure
+Energy-monitoring-system/
 ├── Core/
-│   ├── Src/
-│   │   ├── main.c           # Main application loop
-│   │   ├── energy.c         # RMS calculation, power, CO2
-│   │   └── lcd_i2c.c        # LCD1602 I2C driver
-│   └── Inc/
-│       ├── energy.h
-│       ├── energy_config.h  # Calibration constants
-│       └── lcd_i2c.h
-├── dataset/
-│   └── sample_readings.csv  # Example logged data
-├── tools/
-│   └── uart_logger.py       # Python UART → CSV logger
-├── docs/
-│   └── wiring_diagram.png   # Hardware connection diagram
+│   ├── Inc/
+│   │   └── main.h
+│   └── Src/
+│       ├── main.c          ← Main application code
+│       ├── stm32f4xx_it.c  ← Interrupt handlers
+│       └── stm32f4xx_hal_msp.c
+├── Drivers/
+│   ├── STM32F4xx_HAL_Driver/
+│   └── CMSIS/
+├── STM32CubeIDE/           ← IDE project files
+├── Energy_Monitoring_system.ioc ← CubeMX config
 └── README.md
 
-## Dataset Format
+🐛 Known Issues & Fixes
 
-Data is logged via UART as CSV and captured using `tools/uart_logger.py`:
+ADC DMA issue: Use uint32_t array for DMA buffer, not uint16_t
+Float printf: Add -u _printf_float to linker flags
+Current noise: Low-pass filter + 500 sample averaging applied
+Workspace path: Always open STM32CubeIDE with Documents/Github/Energy-monitoring-system as workspace
 
-timestamp,voltage_V,current_A,power_W,co2_kgph
-2026-04-16 15:23:01,229.4,1.24,284.3,0.000065
 
-## Emission Factor
+🔮 Future Improvements
 
-Carbon intensity used: **0.82 kgCO2/kWh** (India national grid average, 
-Central Electricity Authority 2023). To adapt for UK grid (~0.23 kgCO2/kWh) 
-or real-time grid intensity via the National Grid ESO API, update 
-`GRID_EMISSION_FACTOR` in `energy_config.h`.
+ Energy consumption over time (kWh calculation)
+ UART data logging to PC
+ Over-current alert with buzzer
+ IoT integration via Ethernet (STM32F429 has built-in ETH)
+ SD card data logging
 
-## Next Steps (Research Roadmap)
 
-- [ ] Collect 4+ weeks of continuous load data
-- [ ] Train TinyML anomaly detection model (TFLite Micro)
-- [ ] Deploy inference on Nucleo-F429ZI — measure latency and RAM
-- [ ] Benchmark INT8 quantized model vs float32 baseline
-- [ ] Submit findings to IEEE ISGT or ACM BuildSys workshop
-
-## Research Context
-
-This project sits at the intersection of embedded systems engineering and 
-sustainability science. The core research question driving the next phase is:
-
-> *Can a sub-50KB machine learning model, running entirely on a 
-> resource-constrained ARM Cortex-M4, detect energy anomalies with sufficient 
-> accuracy to support real-time carbon-aware demand management — without any 
-> cloud dependency?*
-
-This question is the basis of a planned PhD research proposal targeting 
-UK universities in the areas of sustainable energy systems, edge AI, and 
-embedded intelligence.
-
-## Tools & Dependencies
-
-- STM32CubeIDE 1.14+
-- STM32 HAL (included via CubeMX)
-- Python 3.x + pyserial (for UART logging)
-- TensorFlow 2.x + TFLite (for upcoming model training phase)
-
-## Author
-
-Embedded Engineer | MSc Sustainability Science (in progress)  
-Research interests: TinyML, edge computing, sustainable IoT, carbon-aware systems
+👩‍💻 Author
+Aditi Raj
+STM32 Embedded Systems Project
+NUCLEO-F429ZI Energy Monitoring System

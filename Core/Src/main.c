@@ -24,8 +24,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#define CURRENT_OFFSET 1.65     // measure this
-#define CURRENT_SENS 0.1        // ACS712 20A
+#define CURRENT_OFFSET 1.643
+#define CURRENT_SENS 0.1
 
 /* USER CODE END Includes */
 
@@ -69,6 +69,7 @@ PCD_HandleTypeDef hpcd_USB_OTG_FS;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
+static void MX_DMA_Init(void);
 static void MX_ETH_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
@@ -112,6 +113,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC1_Init();
   MX_ETH_Init();
   MX_I2C1_Init();
@@ -121,40 +123,31 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
       LCD_Init(&hi2c1);                  // Initialize LCD
-
   /* USER CODE END 2 */
-      uint16_t adc_val[2];
-
+      // Add above while(1):
+      uint32_t adc_val[2]={0};
       HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_val, 2);
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
 
-  /* USER CODE END 3 */
+      while(1)
+      {
+    	  char buffer[32];
+    	     //snprintf(buffer, sizeof(buffer),"A0:%u A1:%u", adc_val[0], adc_val[1]);
+             float voltage = ((adc_val[0] & 0xFFF) * 5 / 4095)*4.8;
+             float current_voltage = ((adc_val[1] & 0xFFF) * 5) / 4095;
+             float current = (current_voltage - CURRENT_OFFSET) / CURRENT_SENS;
+             //float power = current * voltage;
 
-	      float voltage = (adc_val[0] * 3.3) / 4095;
-          float current_voltage = (adc_val[1] * 5 )/ 4095;
-          float current = (current_voltage - CURRENT_OFFSET) / CURRENT_SENS;
+             LCD_SetCursor(0,0);
+    	     sprintf(buffer, "V: %.2f", voltage);
+    	     LCD_Print(buffer);
 
-          char adc_buffer[16];
+    	      LCD_SetCursor(1,0);
+    	      sprintf(buffer, "I: %.2f", current);
+    	      LCD_Print(buffer);
 
-	      sprintf(adc_buffer, "V: %.2f V ", voltage);
-
-	      LCD_SetCursor(0,0);
-	      LCD_Print(adc_buffer);
-
-	      sprintf(adc_buffer, "I: %.2f A", current);
-
-	      LCD_SetCursor(1,0);
-	      LCD_Print(adc_buffer);
-
-	      HAL_Delay(500);
-
+    	      HAL_Delay(500);
+      }
 }
-}
-
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -230,8 +223,8 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 2;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     Error_Handler();
@@ -241,7 +234,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_3;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -249,7 +242,9 @@ static void MX_ADC1_Init(void)
 
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
+  sConfig.Channel = ADC_CHANNEL_10;
   sConfig.Rank = 2;
+  sConfig.SamplingTime = ADC_SAMPLETIME_56CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -259,7 +254,10 @@ static void MX_ADC1_Init(void)
   /* USER CODE END ADC1_Init 2 */
 
 }
-
+static void MX_DMA_Init(void)
+{
+    __HAL_RCC_DMA2_CLK_ENABLE();
+}
 /**
   * @brief ETH Initialization Function
   * @param None
@@ -511,7 +509,6 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(USB_OverCurrent_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
-
   /* USER CODE END MX_GPIO_Init_2 */
 }
 
