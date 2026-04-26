@@ -1,5 +1,5 @@
 Application/User/Core/main.o: \
- /Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c \
+ /Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Core/Src/main.c \
  ../../Core/Inc/main.h \
  ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../../Core/Inc/stm32f4xx_hal_conf.h \
@@ -36,7 +36,7 @@ Application/User/Core/main.o: \
  ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h \
  ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
- /Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/STM32CubeIDE/Application/User/Core/lcd_i2c.h
+ /Users/aditi_raj/Documents/Github/Energy-monitoring-system/STM32CubeIDE/Application/User/Core/lcd_i2c.h
 ../../Core/Inc/main.h:
 ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../../Core/Inc/stm32f4xx_hal_conf.h:
@@ -73,4 +73,4 @@ Application/User/Core/main.o: \
 ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h:
 ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h:
 ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
-/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/STM32CubeIDE/Application/User/Core/lcd_i2c.h:
+/Users/aditi_raj/Documents/Github/Energy-monitoring-system/STM32CubeIDE/Application/User/Core/lcd_i2c.h:

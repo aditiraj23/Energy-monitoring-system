@@ -1,5 +1,5 @@
 Drivers/STM32F4xx_HAL_Driver/stm32f4xx_ll_usb.o: \
- /Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.c \
+ /Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.c \
  ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../../Core/Inc/stm32f4xx_hal_conf.h \
  ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \

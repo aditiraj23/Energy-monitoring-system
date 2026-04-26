@@ -1,0 +1,84 @@
+!SESSION 2026-04-19 00:34:40.247 -----------------------------------------------
+eclipse.buildId=Version 2.1.1
+java.version=21.0.9
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=macosx, ARCH=aarch64, WS=cocoa, NL=en_IN
+Framework arguments:  -keyring /Users/aditi_raj/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch aarch64 -keyring /Users/aditi_raj/.eclipse_keyring
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-04-19 00:35:06.667
+!MESSAGE Log4j2 initialized with config file /Users/aditi_raj/Documents/Github/Energy-monitoring-system/.metadata/.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-04-19 00:35:08.985
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.core.jobs 2 2 2026-04-19 00:35:15.704
+!MESSAGE Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: org.eclipse.ui.internal.decorators.DecorationScheduler$1 RUNNING
+	 at java.base/java.io.UnixFileSystem.list0(Native Method)
+	 at java.base/java.io.UnixFileSystem.list(UnixFileSystem.java:280)
+	 at java.base/java.io.File.normalizedList(File.java:1178)
+	 at java.base/java.io.File.list(File.java:1219)
+	 at org.eclipse.core.internal.utils.FileUtil.realPath(FileUtil.java:115)
+	 at org.eclipse.core.internal.utils.FileUtil.realURI(FileUtil.java:181)
+	 at org.eclipse.core.internal.localstore.FileSystemResourceManager.setLocation(FileSystemResourceManager.java:1112)
+	 at org.eclipse.core.internal.localstore.FileSystemResourceManager.getStoreRoot(FileSystemResourceManager.java:624)
+	 at org.eclipse.core.internal.localstore.FileSystemResourceManager.getStore(FileSystemResourceManager.java:581)
+	 at org.eclipse.core.internal.localstore.FileSystemResourceManager.attributes(FileSystemResourceManager.java:307)
+	 at org.eclipse.core.internal.resources.Resource.getResourceAttributes(Resource.java:1209)
+	 at org.eclipse.ui.internal.ide.SymlinkDecorator.decorate(SymlinkDecorator.java:70)
+	 at org.eclipse.ui.internal.decorators.LightweightDecoratorDefinition.decorate(LightweightDecoratorDefinition.java:250)
+	 at org.eclipse.ui.internal.decorators.LightweightDecoratorManager$LightweightRunnable.run(LightweightDecoratorManager.java:105)
+	 at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:47)
+	 at org.eclipse.ui.internal.decorators.LightweightDecoratorManager.decorate(LightweightDecoratorManager.java:359)
+	 at org.eclipse.ui.internal.decorators.LightweightDecoratorManager.getDecorations(LightweightDecoratorManager.java:345)
+	 at org.eclipse.ui.internal.decorators.DecorationScheduler$1.queue(DecorationScheduler.java:410)
+	 at org.eclipse.ui.internal.decorators.DecorationScheduler$1.run(DecorationScheduler.java:388)
+	 at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SESSION 2026-04-19 03:03:15.733 -----------------------------------------------
+eclipse.buildId=Version 2.1.1
+java.version=21.0.9
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=macosx, ARCH=aarch64, WS=cocoa, NL=en_IN
+Framework arguments:  -keyring /Users/aditi_raj/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch aarch64 -keyring /Users/aditi_raj/.eclipse_keyring
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-04-19 03:03:40.179
+!MESSAGE Log4j2 initialized with config file /Users/aditi_raj/Documents/Github/Energy-monitoring-system/.metadata/.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-04-19 03:03:42.216
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2026-04-19 03:04:28.453
+!MESSAGE Indexed 'Energy_Monitoring_system' (3 sources, 57 headers) in 0.441 sec: 2,191 declarations; 3,069 references; 1 unresolved inclusions; 1 syntax errors; 21 unresolved names (0.4%)
+!SESSION 2026-04-19 18:02:37.440 -----------------------------------------------
+eclipse.buildId=Version 2.1.1
+java.version=21.0.9
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=macosx, ARCH=aarch64, WS=cocoa, NL=en_IN
+Framework arguments:  -keyring /Users/aditi_raj/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch aarch64 -keyring /Users/aditi_raj/.eclipse_keyring
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-04-19 18:03:23.659
+!MESSAGE Log4j2 initialized with config file /Users/aditi_raj/Documents/Github/Energy-monitoring-system/.metadata/.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-04-19 18:03:26.146
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2026-04-21 22:49:32.524
+!MESSAGE Indexed 'Energy_Monitoring_system' (29 sources, 98 headers) in 0.932 sec: 8,613 declarations; 52,405 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0033%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2026-04-21 23:07:58.353
+!MESSAGE Indexed 'Energy_Monitoring_system' (29 sources, 98 headers) in 0.762 sec: 8,613 declarations; 52,405 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0033%)
+!SESSION 2026-04-22 20:51:59.979 -----------------------------------------------
+eclipse.buildId=Version 2.1.1
+java.version=21.0.9
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=macosx, ARCH=aarch64, WS=cocoa, NL=en_IN
+Framework arguments:  -keyring /Users/aditi_raj/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch aarch64 -keyring /Users/aditi_raj/.eclipse_keyring
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-04-22 20:52:04.942
+!MESSAGE Log4j2 initialized with config file /Users/aditi_raj/Documents/Github/Energy-monitoring-system/.metadata/.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-04-22 20:52:08.664
+!MESSAGE Started RMI Server, listening on port 41337

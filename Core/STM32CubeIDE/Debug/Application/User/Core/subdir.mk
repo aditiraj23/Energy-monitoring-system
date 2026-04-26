@@ -6,9 +6,9 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Application/User/Core/i2c_lcd.c \
-/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c \
-/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/stm32f4xx_hal_msp.c \
-/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/stm32f4xx_it.c \
+/Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Core/Src/main.c \
+/Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Core/Src/stm32f4xx_hal_msp.c \
+/Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Core/Src/stm32f4xx_it.c \
 ../Application/User/Core/syscalls.c \
 ../Application/User/Core/sysmem.c 
 
@@ -31,13 +31,13 @@ C_DEPS += \
 
 # Each subdirectory must supply rules for building sources it contributes
 Application/User/Core/%.o Application/User/Core/%.su Application/User/Core/%.cyclo: ../Application/User/Core/%.c Application/User/Core/subdir.mk
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/STM32CubeIDE/Application/User/Core -I../../Core/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
-Application/User/Core/main.o: /Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/main.c Application/User/Core/subdir.mk
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/STM32CubeIDE/Application/User/Core -I../../Core/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
-Application/User/Core/stm32f4xx_hal_msp.o: /Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/stm32f4xx_hal_msp.c Application/User/Core/subdir.mk
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/STM32CubeIDE/Application/User/Core -I../../Core/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
-Application/User/Core/stm32f4xx_it.o: /Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/stm32f4xx_it.c Application/User/Core/subdir.mk
-	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/STM32CubeIDE/Application/User/Core -I../../Core/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../../Core/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -I/Users/aditi_raj/Documents/Github/Energy-monitoring-system/STM32CubeIDE/Application/User/Core -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Application/User/Core/main.o: /Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Core/Src/main.c Application/User/Core/subdir.mk
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../../Core/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -I/Users/aditi_raj/Documents/Github/Energy-monitoring-system/STM32CubeIDE/Application/User/Core -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Application/User/Core/stm32f4xx_hal_msp.o: /Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Core/Src/stm32f4xx_hal_msp.c Application/User/Core/subdir.mk
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../../Core/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -I/Users/aditi_raj/Documents/Github/Energy-monitoring-system/STM32CubeIDE/Application/User/Core -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Application/User/Core/stm32f4xx_it.o: /Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Core/Src/stm32f4xx_it.c Application/User/Core/subdir.mk
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../../Core/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -I/Users/aditi_raj/Documents/Github/Energy-monitoring-system/STM32CubeIDE/Application/User/Core -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 
 clean: clean-Application-2f-User-2f-Core
 

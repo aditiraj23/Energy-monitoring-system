@@ -1,5 +1,5 @@
 Application/User/Core/stm32f4xx_hal_msp.o: \
- /Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/stm32f4xx_hal_msp.c \
+ /Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Core/Src/stm32f4xx_hal_msp.c \
  ../../Core/Inc/main.h \
  ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../../Core/Inc/stm32f4xx_hal_conf.h \

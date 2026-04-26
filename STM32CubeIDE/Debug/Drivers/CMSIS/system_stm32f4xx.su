@@ -1,2 +1,2 @@
-/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/system_stm32f4xx.c:167:6:SystemInit	4	static
-/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/Core/Src/system_stm32f4xx.c:220:6:SystemCoreClockUpdate	32	static
+/Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Src/system_stm32f4xx.c:167:6:SystemInit	4	static
+/Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/Src/system_stm32f4xx.c:220:6:SystemCoreClockUpdate	32	static

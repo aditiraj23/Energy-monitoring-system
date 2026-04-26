@@ -64,8 +64,8 @@ all: main-build
 main-build: Energy_Monitoring_system.elf secondary-outputs
 
 # Tool invocations
-Energy_Monitoring_system.elf Energy_Monitoring_system.map: $(OBJS) $(USER_OBJS) /Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/STM32CubeIDE/STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Energy_Monitoring_system.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/aditi_raj/STM32CubeIDE/workspace_2.1.1/Energy_Monitoring_system/STM32CubeIDE/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Energy_Monitoring_system.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Energy_Monitoring_system.elf Energy_Monitoring_system.map: $(OBJS) $(USER_OBJS) /Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/STM32CubeIDE/STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Energy_Monitoring_system.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/aditi_raj/Documents/Github/Energy-monitoring-system/Core/STM32CubeIDE/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Energy_Monitoring_system.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
