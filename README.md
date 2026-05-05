@@ -1,106 +1,103 @@
-#Energy Monitoring System
-A real-time AC energy monitoring system built on the STM32F429ZI (NUCLEO-F429ZI) board. It measures AC voltage, current, and power using ZMPT101B and ACS712 sensors, displaying live readings on an I2C LCD.
+# STM32 Energy Monitor
 
-Features
+A simple energy monitoring setup using the NUCLEO-F429ZI board. It reads voltage and current from two sensors and shows the values on a small LCD. Nothing fancy — just a clean starting point for anyone wanting to measure power consumption with an STM32.
 
-Real-time AC Voltage measurement (ZMPT101B)
-Real-time Current measurement (ACS712 20A)
-Power calculation (P = V × I)
-Live display on 16x2 I2C LCD
-Auto-calibration of current sensor offset on startup
+---
 
+## What it does
 
-Hardware Requirements
-ComponentDescriptionSTM32F429ZINUCLEO-F429ZI Development BoardZMPT101BAC Voltage Sensor ModuleACS712 20ACurrent Sensor Module16x2 I2C LCDDisplay (I2C address: 0x27)Jumper WiresFor connections
+- Reads AC voltage via a **ZMPT101B** sensor
+- Reads current via an **ACS712** sensor
+- Converts raw ADC values to volts and amps
+- Displays both on a **16x2 I2C LCD**, refreshed every 500ms
+- Uses **DMA** for ADC sampling so the CPU isn't stuck waiting
 
-Pin Configuration
-SensorSTM32 PinArduino HeaderADC ChannelZMPT101B (Voltage)PA3A0ADC1 CH3ACS712 (Current)PC0A1ADC1 CH10LCD SDAPB9-I2C1LCD SCLPB6-I2C1
+---
 
-Wiring Diagram
-AC Mains
-   │
-   ├──── ZMPT101B ──── A0 (PA3) ──── STM32 ADC
-   │
-   └──── ACS712 IP+ ──── Load ──── ACS712 IP- ──── Neutral
-              │
-              └──── A1 (PC0) ──── STM32 ADC
+## Hardware used
 
-WARNING: Be extremely careful when working with AC mains voltage. Always use proper isolation and safety precautions.
+- NUCLEO-F429ZI (STM32F429ZI)
+- ZMPT101B voltage sensor module
+- ACS712 current sensor module (20A variant, 100mV/A)
+- 16x2 LCD with I2C backpack (PCF8574)
 
+---
 
-Software Requirements
+## Wiring
 
-STM32CubeIDE
-STM32CubeMX
-STM32 HAL Drivers (STM32F4xx)
-GNU Tools for STM32 (14.3.rel1)
-VS Code (for GitHub integration)
+| Sensor / Device | STM32 Pin | Notes |
+|---|---|---|
+| ZMPT101B output | PA3 (ADC1 CH3) | Voltage sensing |
+| ACS712 output | PC0 (ADC1 CH10) | Current sensing |
+| LCD SDA | PB9 | I2C1 |
+| LCD SCL | PB8 | I2C1 |
 
+---
 
-Open STM32CubeIDE
-Go to File → Import → General → Existing Projects into Workspace
-Browse to the STM32CubeIDE folder inside the cloned repo
-Click Finish
+## How the math works
 
-Build the Project
+**Voltage:**
+```
+voltage = (adc_raw / 4095.0) * 5.0 * 4.8
+```
 
-Click Project → Build or press Ctrl+B
-Flash to board using Run → Debug
+**Current:**
+```
+sensor_voltage = (adc_raw / 4095.0) * 5.0
+current = (sensor_voltage - 1.643) / 0.1
+```
 
+The `1.643V` offset is what my ACS712 outputs at zero current — yours might be slightly different, measure it with a multimeter and update `CURRENT_OFFSET` in `main.c`. The `0.1` is the sensitivity for the 20A variant (100mV/A). If you're using a different variant, change `CURRENT_SENS` accordingly:
 
-ensor Formulas
-Voltage (ZMPT101B)
-V_rms = sqrt(mean(samples²)) × 311.13
-Where 311.13 = 220V × √2 (peak voltage for 220V AC mains)
-Current (ACS712 20A)
-I_rms = sqrt(mean(samples²)) / sensitivity
-sensitivity = 0.1 V/A  (100mV per Amp for 20A version)
-Power
-P = V_rms × I_rms  (in Watts)
+- 5A version → 0.185
+- 20A version → 0.100
+- 30A version → 0.066
 
-LCD Display Format
-┌────────────────┐
-│ V:14.0V I:2.50A│
-│ P:550.0W        │
-└────────────────┘
+---
 
-Key Configuration
-ParameterValueADC Resolution12-bit (0–4095)ADC Reference3.3VSampling500 samples per readingCurrent OffsetAuto-calibrated on bootDead Zone< 0.3A treated as 0MCU Clock168 MHzI2C Speed100 kHz
+## Project config
 
-Project Structure
-Energy-monitoring-system/
-├── Core/
-│   ├── Inc/
-│   │   └── main.h
-│   └── Src/
-│       ├── main.c          ← Main application code
-│       ├── stm32f4xx_it.c  ← Interrupt handlers
-│       └── stm32f4xx_hal_msp.c
-├── Drivers/
-│   ├── STM32F4xx_HAL_Driver/
-│   └── CMSIS/
-├── STM32CubeIDE/           ← IDE project files
-├── Energy_Monitoring_system.ioc ← CubeMX config
-└── README.md
+| Setting | Value |
+|---|---|
+| ADC resolution | 12-bit |
+| ADC mode | Continuous scan + DMA |
+| Sample time | 56 cycles |
+| I2C speed | 100 kHz |
+| UART baud rate | 115200 |
+| System clock | 168 MHz (HSE + PLL) |
 
-Known Issues & Fixes
+---
 
-ADC DMA issue: Use uint32_t array for DMA buffer, not uint16_t
-Float printf: Add -u _printf_float to linker flags
-Current noise: Low-pass filter + 500 sample averaging applied
-Workspace path: Always open STM32CubeIDE with Documents/Github/Energy-monitoring-system as workspace
+## Getting started
 
+You'll need STM32CubeIDE (or any ARM GCC toolchain) and the STM32 HAL libraries. The project was built with CubeMX so opening it in CubeIDE should work out of the box.
 
-Future Improvements
+```bash
+git clone https://github.com/your-username/stm32-energy-monitor.git
+```
 
- Energy consumption over time (kWh calculation)
- UART data logging to PC
- Over-current alert with buzzer
- IoT integration via Ethernet (STM32F429 has built-in ETH)
- SD card data logging
+Open in STM32CubeIDE, build, and flash via ST-Link.
 
+---
 
-👩Author
-Aditi Raj
-STM32 Embedded Systems Project
-NUCLEO-F429ZI Energy Monitoring System
+## File structure
+
+```
+Core/
+  Src/main.c          <- main application code
+  Inc/main.h
+Drivers/              <- HAL drivers (auto-generated)
+lcd_i2c.c
+lcd_i2c.h
+```
+
+---
+
+## What's next
+
+- Add RMS calculation for proper AC measurements instead of just reading raw ADC values
+- Calculate and display real power (W) and accumulated energy (Wh) — the two numbers that actually matter
+- Over-voltage and over-current alerts using the onboard LEDs or a buzzer, so the system can warn you without needing a screen
+- Log readings over UART to a PC or save to an SD card for historical tracking
+- Send data over the onboard Ethernet to a simple local dashboard — no cloud needed, just a browser on the same network
+- Low-power mode between readings to make it viable for battery-powered setups
