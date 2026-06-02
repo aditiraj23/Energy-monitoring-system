@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+
+# STM32CubeIDE/Eclipse workspace state
+.metadata/
+*.log
+
+# Build output
+Debug/
+Release/
+**/Debug/
+**/Release/
+
+# Generated compiler/build byproducts
+*.o
+*.d
+*.su
+*.cyclo
+*.elf
+*.hex
+*.bin
+*.map
+*.list
+
+# Local editor state
+.vscode/
+.idea/
