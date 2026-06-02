@@ -20,22 +20,32 @@
 #include "main.h"
 #include "string.h"
 #include "lcd_i2c.h"
-#include "math.h"
+#include <stdio.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#define CURRENT_OFFSET 1.643
-#define CURRENT_SENS 0.1
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef struct
+{
+  float voltage;
+  float current;
+  float power;
+} Measurement_t;
 
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define ADC_MAX_VALUE       4095.0f
+#define ADC_REF_VOLTAGE     5.0f
+#define VOLTAGE_SCALE       4.8f
+#define CURRENT_OFFSET      1.643f
+#define CURRENT_SENS        0.1f
+#define LCD_LINE_LENGTH     16U
+#define DISPLAY_DELAY_MS    500U
 
 /* USER CODE END PD */
 
@@ -62,6 +72,7 @@ UART_HandleTypeDef huart3;
 PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
 /* USER CODE BEGIN PV */
+static volatile uint16_t adc_values[2];
 
 /* USER CODE END PV */
 
@@ -76,11 +87,51 @@ static void MX_UART4_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_USB_OTG_FS_PCD_Init(void);
 /* USER CODE BEGIN PFP */
+static void App_Init(void);
+static Measurement_t Read_Measurement(void);
+static void Display_Measurement(const Measurement_t *measurement);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+static void App_Init(void)
+{
+  LCD_Init(&hi2c1);
+  LCD_Clear();
+
+  if (HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_values, 2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+static Measurement_t Read_Measurement(void)
+{
+  uint16_t voltage_raw = adc_values[0] & 0x0FFF;
+  uint16_t current_raw = adc_values[1] & 0x0FFF;
+  float sensor_voltage = ((float)current_raw * ADC_REF_VOLTAGE) / ADC_MAX_VALUE;
+  Measurement_t measurement;
+
+  measurement.voltage = ((float)voltage_raw * ADC_REF_VOLTAGE / ADC_MAX_VALUE) * VOLTAGE_SCALE;
+  measurement.current = (sensor_voltage - CURRENT_OFFSET) / CURRENT_SENS;
+  measurement.power = measurement.voltage * measurement.current;
+
+  return measurement;
+}
+
+static void Display_Measurement(const Measurement_t *measurement)
+{
+  char line[LCD_LINE_LENGTH + 1U];
+
+  LCD_SetCursor(0, 0);
+  snprintf(line, sizeof(line), "V:%5.2f I:%5.2f ", measurement->voltage, measurement->current);
+  LCD_Print(line);
+
+  LCD_SetCursor(1, 0);
+  snprintf(line, sizeof(line), "P:%7.2f W     ", measurement->power);
+  LCD_Print(line);
+}
 
 /* USER CODE END 0 */
 
@@ -121,32 +172,15 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
-
-      LCD_Init(&hi2c1);                  // Initialize LCD
+  App_Init();
   /* USER CODE END 2 */
-      // Add above while(1):
-      uint32_t adc_val[2]={0};
-      HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_val, 2);
+  while(1)
+  {
+    Measurement_t measurement = Read_Measurement();
 
-      while(1)
-      {
-    	  char buffer[32];
-    	     //snprintf(buffer, sizeof(buffer),"A0:%u A1:%u", adc_val[0], adc_val[1]);
-             float voltage = ((adc_val[0] & 0xFFF) * 5 / 4095)*4.8;
-             float current_voltage = ((adc_val[1] & 0xFFF) * 5) / 4095;
-             float current = (current_voltage - CURRENT_OFFSET) / CURRENT_SENS;
-             //float power = current * voltage;
-
-             LCD_SetCursor(0,0);
-    	     sprintf(buffer, "V: %.2f", voltage);
-    	     LCD_Print(buffer);
-
-    	      LCD_SetCursor(1,0);
-    	      sprintf(buffer, "I: %.2f", current);
-    	      LCD_Print(buffer);
-
-    	      HAL_Delay(500);
-      }
+    Display_Measurement(&measurement);
+    HAL_Delay(DISPLAY_DELAY_MS);
+  }
 }
 /**
   * @brief System Clock Configuration
