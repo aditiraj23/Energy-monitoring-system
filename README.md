@@ -1,103 +1,71 @@
 # STM32 Energy Monitor
 
-A simple energy monitoring setup using the NUCLEO-F429ZI board. It reads voltage and current from two sensors and shows the values on a small LCD. Nothing fancy — just a clean starting point for anyone wanting to measure power consumption with an STM32.
+An embedded energy monitoring project built on the **NUCLEO-F429ZI** board. It reads voltage and current sensor data, calculates electrical values, and displays them on a 16x2 I2C LCD.
 
----
+This project is useful for learning STM32 ADC, DMA, I2C, LCD interfacing, and basic FreeRTOS task scheduling.
 
-## What it does
+## Features
 
-- Reads AC voltage via a **ZMPT101B** sensor
-- Reads current via an **ACS712** sensor
-- Converts raw ADC values to volts and amps
-- Displays both on a **16x2 I2C LCD**, refreshed every 500ms
-- Uses **DMA** for ADC sampling so the CPU isn't stuck waiting
+- Measures voltage using a **ZMPT101B** sensor
+- Measures current using an **ACS712** sensor
+- Uses **ADC with DMA** for continuous sampling
+- Calculates RMS voltage, RMS current, and power
+- Displays live values on a **16x2 I2C LCD**
+- Runs measurement and display logic inside a **FreeRTOS task**
+- Built using STM32 HAL and STM32CubeIDE
 
----
+## Hardware
 
-## Hardware used
-
-- NUCLEO-F429ZI (STM32F429ZI)
-- ZMPT101B voltage sensor module
-- ACS712 current sensor module (20A variant, 100mV/A)
-- 16x2 LCD with I2C backpack (PCF8574)
-
----
+| Component | Purpose |
+|---|---|
+| STM32 NUCLEO-F429ZI | Main controller |
+| ZMPT101B | Voltage sensing |
+| ACS712 20A | Current sensing |
+| 16x2 I2C LCD | Display output |
 
 ## Wiring
 
-| Sensor / Device | STM32 Pin | Notes |
-|---|---|---|
-| ZMPT101B output | PA3 (ADC1 CH3) | Voltage sensing |
-| ACS712 output | PC0 (ADC1 CH10) | Current sensing |
-| LCD SDA | PB9 | I2C1 |
-| LCD SCL | PB8 | I2C1 |
-
----
-
-## How the math works
-
-**Voltage:**
-```
-voltage = (adc_raw / 4095.0) * 5.0 * 4.8
-```
-
-**Current:**
-```
-sensor_voltage = (adc_raw / 4095.0) * 5.0
-current = (sensor_voltage - 1.643) / 0.1
-```
-
-The `1.643V` offset is what my ACS712 outputs at zero current — yours might be slightly different, measure it with a multimeter and update `CURRENT_OFFSET` in `main.c`. The `0.1` is the sensitivity for the 20A variant (100mV/A). If you're using a different variant, change `CURRENT_SENS` accordingly:
-
-- 5A version → 0.185
-- 20A version → 0.100
-- 30A version → 0.066
-
----
-
-## Project config
-
-| Setting | Value |
+| Device | STM32 Pin |
 |---|---|
-| ADC resolution | 12-bit |
-| ADC mode | Continuous scan + DMA |
-| Sample time | 56 cycles |
-| I2C speed | 100 kHz |
-| UART baud rate | 115200 |
-| System clock | 168 MHz (HSE + PLL) |
+| ZMPT101B output | PA3 / ADC1 CH3 |
+| ACS712 output | PC0 / ADC1 CH10 |
+| LCD SDA | PB9 |
+| LCD SCL | PB8 |
 
----
+## Software Used
 
-## Getting started
+- STM32CubeIDE
+- STM32 HAL Driver
+- FreeRTOS
+- C language
 
-You'll need STM32CubeIDE (or any ARM GCC toolchain) and the STM32 HAL libraries. The project was built with CubeMX so opening it in CubeIDE should work out of the box.
+## Project Highlights
 
-```bash
-git clone https://github.com/your-username/stm32-energy-monitor.git
-```
+- ADC runs in scan mode with DMA
+- Two analog channels are sampled continuously
+- FreeRTOS manages the measurement task
+- LCD updates periodically with voltage, current, and power
+- Code is kept simple and easy to modify for future features
 
-Open in STM32CubeIDE, build, and flash via ST-Link.
+## How to Build
 
----
+1. Open the project in STM32CubeIDE.
+2. Build the project.
+3. Flash it to the NUCLEO-F429ZI board using ST-Link.
+4. Connect the sensors and LCD as shown in the wiring table.
 
-## File structure
+## Main Files
 
-```
-Core/
-  Src/main.c          <- main application code
-  Inc/main.h
-Drivers/              <- HAL drivers (auto-generated)
-lcd_i2c.c
-lcd_i2c.h
-```
+| File | Description |
+|---|---|
+| `Core/Src/main.c` | Main application logic |
+| `Core/Src/i2c_lcd.c` | LCD driver |
+| `Core/Inc/lcd_i2c.h` | LCD driver header |
+| `Core/Inc/FreeRTOSConfig.h` | FreeRTOS configuration |
 
----
+## Future Improvements
 
-## What's next
-
-- Add RMS calculation for proper AC measurements instead of just reading raw ADC values
-- Calculate and display real power (W) and accumulated energy (Wh) — the two numbers that actually matter
-- Over-voltage and over-current alerts using the onboard LEDs or a buzzer, so the system can warn you without needing a screen
-- Log readings over UART to a PC or save to an SD card for historical tracking
-- Send data over the onboard Ethernet to a simple local dashboard — no cloud needed, just a browser on the same network
-- Low-power mode between readings to make it viable for battery-powered setups
+- Add energy calculation in Wh or kWh
+- Add over-voltage and over-current alerts
+- Send data over UART, Ethernet, or cloud dashboard
+- Store readings for history and analysis

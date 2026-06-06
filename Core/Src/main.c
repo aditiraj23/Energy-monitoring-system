@@ -20,7 +20,11 @@
 #include "main.h"
 #include "string.h"
 #include "lcd_i2c.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include <math.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -40,12 +44,15 @@ typedef struct
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define ADC_MAX_VALUE       4095.0f
-#define ADC_REF_VOLTAGE     5.0f
+#define ADC_REF_VOLTAGE     3.3f
 #define VOLTAGE_SCALE       4.8f
 #define CURRENT_OFFSET      1.643f
 #define CURRENT_SENS        0.1f
 #define LCD_LINE_LENGTH     16U
-#define DISPLAY_DELAY_MS    500U
+#define ADC_SAMPLE_COUNT    200U
+#define ADC_SAMPLE_DELAY_MS 1U
+#define DISPLAY_DELAY_MS    300U
+#define MEASUREMENT_TASK_STACK_WORDS 768U
 
 /* USER CODE END PD */
 
@@ -88,8 +95,11 @@ static void MX_USART3_UART_Init(void);
 static void MX_USB_OTG_FS_PCD_Init(void);
 /* USER CODE BEGIN PFP */
 static void App_Init(void);
+static float ADC_ToVoltage(uint16_t raw);
 static Measurement_t Read_Measurement(void);
+static void LCD_PrintLine(uint8_t row, const char *format, ...);
 static void Display_Measurement(const Measurement_t *measurement);
+static void MeasurementTask(void *argument);
 
 /* USER CODE END PFP */
 
@@ -106,31 +116,83 @@ static void App_Init(void)
   }
 }
 
+static float ADC_ToVoltage(uint16_t raw)
+{
+  return ((float)(raw & 0x0FFFU) * ADC_REF_VOLTAGE) / ADC_MAX_VALUE;
+}
+
 static Measurement_t Read_Measurement(void)
 {
-  uint16_t voltage_raw = adc_values[0] & 0x0FFF;
-  uint16_t current_raw = adc_values[1] & 0x0FFF;
-  float sensor_voltage = ((float)current_raw * ADC_REF_VOLTAGE) / ADC_MAX_VALUE;
-  Measurement_t measurement;
+  uint16_t voltage_samples[ADC_SAMPLE_COUNT];
+  uint16_t current_samples[ADC_SAMPLE_COUNT];
+  float voltage_offset = 0.0f;
+  float voltage_square_sum = 0.0f;
+  float current_square_sum = 0.0f;
+  float power_sum = 0.0f;
+  Measurement_t measurement = {0};
 
-  measurement.voltage = ((float)voltage_raw * ADC_REF_VOLTAGE / ADC_MAX_VALUE) * VOLTAGE_SCALE;
-  measurement.current = (sensor_voltage - CURRENT_OFFSET) / CURRENT_SENS;
-  measurement.power = measurement.voltage * measurement.current;
+  for (uint32_t i = 0; i < ADC_SAMPLE_COUNT; i++)
+  {
+    voltage_samples[i] = adc_values[0];
+    current_samples[i] = adc_values[1];
+    voltage_offset += ADC_ToVoltage(voltage_samples[i]);
+    vTaskDelay(pdMS_TO_TICKS(ADC_SAMPLE_DELAY_MS));
+  }
+
+  voltage_offset /= (float)ADC_SAMPLE_COUNT;
+
+  for (uint32_t i = 0; i < ADC_SAMPLE_COUNT; i++)
+  {
+    float voltage = (ADC_ToVoltage(voltage_samples[i]) - voltage_offset) * VOLTAGE_SCALE;
+    float current = (ADC_ToVoltage(current_samples[i]) - CURRENT_OFFSET) / CURRENT_SENS;
+
+    voltage_square_sum += voltage * voltage;
+    current_square_sum += current * current;
+    power_sum += voltage * current;
+  }
+
+  measurement.voltage = sqrtf(voltage_square_sum / (float)ADC_SAMPLE_COUNT);
+  measurement.current = sqrtf(current_square_sum / (float)ADC_SAMPLE_COUNT);
+  measurement.power = power_sum / (float)ADC_SAMPLE_COUNT;
 
   return measurement;
 }
 
+static void LCD_PrintLine(uint8_t row, const char *format, ...)
+{
+  char formatted[LCD_LINE_LENGTH + 1U];
+  char line[LCD_LINE_LENGTH + 1U];
+  va_list args;
+
+  va_start(args, format);
+  vsnprintf(formatted, sizeof(formatted), format, args);
+  va_end(args);
+
+  memset(line, ' ', LCD_LINE_LENGTH);
+  line[LCD_LINE_LENGTH] = '\0';
+  memcpy(line, formatted, strlen(formatted));
+
+  LCD_SetCursor(row, 0);
+  LCD_Print(line);
+}
+
 static void Display_Measurement(const Measurement_t *measurement)
 {
-  char line[LCD_LINE_LENGTH + 1U];
+  LCD_PrintLine(0, "V:%5.1f I:%5.2f", measurement->voltage, measurement->current);
+  LCD_PrintLine(1, "P:%7.2f W", measurement->power);
+}
 
-  LCD_SetCursor(0, 0);
-  snprintf(line, sizeof(line), "V:%5.2f I:%5.2f ", measurement->voltage, measurement->current);
-  LCD_Print(line);
+static void MeasurementTask(void *argument)
+{
+  (void)argument;
 
-  LCD_SetCursor(1, 0);
-  snprintf(line, sizeof(line), "P:%7.2f W     ", measurement->power);
-  LCD_Print(line);
+  for (;;)
+  {
+    Measurement_t measurement = Read_Measurement();
+
+    Display_Measurement(&measurement);
+    vTaskDelay(pdMS_TO_TICKS(DISPLAY_DELAY_MS));
+  }
 }
 
 /* USER CODE END 0 */
@@ -173,13 +235,17 @@ int main(void)
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
   App_Init();
+  if (xTaskCreate(MeasurementTask, "measure", MEASUREMENT_TASK_STACK_WORDS, NULL,
+                  tskIDLE_PRIORITY + 1U, NULL) != pdPASS)
+  {
+    Error_Handler();
+  }
+
+  vTaskStartScheduler();
   /* USER CODE END 2 */
   while(1)
   {
-    Measurement_t measurement = Read_Measurement();
-
-    Display_Measurement(&measurement);
-    HAL_Delay(DISPLAY_DELAY_MS);
+    Error_Handler();
   }
 }
 /**
@@ -563,6 +629,18 @@ void Error_Handler(void)
   {
   }
   /* USER CODE END Error_Handler_Debug */
+}
+
+void vApplicationMallocFailedHook(void)
+{
+  Error_Handler();
+}
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+  (void)xTask;
+  (void)pcTaskName;
+  Error_Handler();
 }
 #ifdef USE_FULL_ASSERT
 /**
